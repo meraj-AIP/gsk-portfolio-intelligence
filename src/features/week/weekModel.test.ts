@@ -1,0 +1,28 @@
+import { describe, expect, it } from 'vitest';
+import type { Commitment, Finding } from '@/shared/types/domain';
+import { buildQueue, isoWeek, reviewPeriod } from './weekModel';
+
+describe('isoWeek', () => {
+  it('matches the ISO calendar, including the year boundary', () => {
+    expect(isoWeek('2026-09-11')).toBe('2026-W37');
+    expect(isoWeek('2026-10-09')).toBe('2026-W41');
+    expect(isoWeek('2026-01-01')).toBe('2026-W01');
+    expect(isoWeek('2027-01-01')).toBe('2026-W53');
+    expect(isoWeek('2024-12-30')).toBe('2025-W01');
+  });
+});
+
+describe('buildQueue continuity', () => {
+  const period = reviewPeriod({ week: '2026-W41', date: '2026-10-12' });
+  const commitment = (id: string, baselineDate: string): Commitment => ({
+    id, projectId: 'P-1', title: `Commitment ${id}`, baselineDate, currentDate: '2026-10-16', owner: 'Test owner', status: 'carried forward', evidenceId: 'E-1', week: '2026-W41',
+  });
+  const finding = { id: 'F-1', title: 'Test finding', category: 'decision needed', statementType: 'reported fact', affectedIds: ['P-1'], previousPosition: 'a', currentPosition: 'b', significance: '', evidenceIds: [], unknowns: '', version: 1, firstSeenWeek: '2026-W39', persistent: true, responses: [] } as unknown as Finding;
+
+  it('marks carried-forward work with the week it was first due, and nothing that falls due this week', () => {
+    const items = buildQueue([], [commitment('C-1', '2026-09-11'), commitment('C-2', '2026-10-09')], [], [], [finding], period);
+    expect(items.find((i) => i.id === 'C-1')?.openSince).toBe('2026-W37');
+    expect(items.find((i) => i.id === 'C-2')?.openSince).toBeUndefined();
+    expect(items.find((i) => i.id === 'F-1')?.openSince).toBe('2026-W39');
+  });
+});

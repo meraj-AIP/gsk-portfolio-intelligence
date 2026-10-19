@@ -1,0 +1,45 @@
+import Box from '@mui/material/Box';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import { alpha } from '@mui/material/styles';
+import type { Source } from '@/shared/types/domain';
+
+const AREAS = ['Identity and ownership', 'Commitments and scope', 'Releases and availability', 'Expenditure and forecast', 'Adoption and outcomes', 'Governance', 'Dependencies'];
+
+const COVERS: Record<string, string[]> = {
+  'SRC-01': ['Identity and ownership', 'Commitments and scope'],
+  'SRC-02': ['Commitments and scope'],
+  'SRC-03': ['Expenditure and forecast'],
+  'SRC-04': ['Releases and availability'],
+  'SRC-05': ['Governance'],
+  'SRC-06': ['Dependencies'],
+  'SRC-07': ['Adoption and outcomes'],
+};
+
+/** Which sources support which portfolio information. Gaps show as empty cells. */
+export function CoverageMap({ sources }: { sources: Source[] }) {
+  return (
+    <Box sx={{ overflowX: 'auto' }}>
+      <Table size="small" sx={{ minWidth: 800 }}>
+        <TableHead><TableRow><TableCell>Source</TableCell>{AREAS.map((a) => <TableCell key={a} align="center">{a}</TableCell>)}</TableRow></TableHead>
+        <TableBody>
+          {sources.map((s) => (
+            <TableRow key={s.id}>
+              <TableCell>{s.name}</TableCell>
+              {AREAS.map((a) => {
+                const covered = (COVERS[s.id] ?? []).includes(a);
+                const weak = covered && s.contentQuality !== 'good';
+                return <TableCell key={a} align="center" sx={{ bgcolor: (t) => (weak ? alpha(t.palette.warning.main, 0.18) : 'transparent') }}>{covered ? (weak ? 'Partial' : 'Yes') : ''}</TableCell>;
+              })}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      <Typography variant="caption">Dependencies are inferred from plans and the model registry; there is no dedicated dependency source yet.</Typography>
+    </Box>
+  );
+}

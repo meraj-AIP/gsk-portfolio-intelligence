@@ -1,0 +1,120 @@
+import type { Dependency, GraphNode } from '@/shared/types/domain';
+
+export const graphNodes: GraphNode[] = [
+  { id: 'PG-01', label: 'Clinical Development Intelligence', kind: 'programme' },
+  { id: 'PG-02', label: 'Commercial Field Enablement', kind: 'programme' },
+  { id: 'PG-03', label: 'Supply Chain Digital Workers', kind: 'programme' },
+  { id: 'PG-04', label: 'Digital Worker Foundations', kind: 'programme' },
+  { id: 'P-101', label: 'Protocol Drafting Assistant', kind: 'project', owner: 'Anjali Mehra' },
+  { id: 'P-102', label: 'Trial Site Feasibility Agent', kind: 'project', owner: 'Ben Okafor' },
+  { id: 'P-103', label: 'Safety Signal Triage', kind: 'project', owner: 'Lucia Ferrante' },
+  { id: 'P-201', label: 'HCP Engagement Copilot', kind: 'project', owner: 'Sarah Whitfield' },
+  { id: 'P-202', label: 'Medical Information Response Agent', kind: 'project', owner: 'Dr Rachel Lindqvist' },
+  { id: 'P-203', label: 'Market Access Evidence Summariser', kind: 'project', owner: 'Kwame Boateng' },
+  { id: 'P-301', label: 'Deviation Investigation Assistant', kind: 'project', owner: 'Jonas Weber' },
+  { id: 'P-302', label: 'Demand Sensing Agent', kind: 'project', owner: 'Helen Osei' },
+  { id: 'P-303', label: 'Batch Record Review Agent', kind: 'project', owner: 'Nadia Rahman' },
+  { id: 'P-401', label: 'Enterprise Context Layer', kind: 'project', owner: 'Devon Carlisle' },
+  { id: 'P-402', label: 'Agent Governance and Vetting Service', kind: 'project', owner: 'Omar Siddiqui' },
+  { id: 'P-403', label: 'Copilot Studio Pattern Library', kind: 'project', owner: 'Grace Chen' },
+  { id: 'D-CDL', label: 'Clinical data lake extract', kind: 'dataset', owner: 'Data Platform Team' },
+  { id: 'D-VEEVA', label: 'Veeva CRM extract', kind: 'dataset', owner: 'Commercial Data Office' },
+  { id: 'D-SAP', label: 'SAP batch records', kind: 'dataset', owner: 'Manufacturing IT' },
+  { id: 'D-VAULT', label: 'Veeva Vault approved content', kind: 'dataset', owner: 'Medical Affairs Operations' },
+  { id: 'D-TENDER', label: 'Europe tender pipeline feed', kind: 'dataset', owner: 'Commercial Operations Europe' },
+  { id: 'M-GPT', label: 'Azure Foundry GPT-4.1 endpoint', kind: 'model', owner: 'AI/ML Engineering' },
+  { id: 'M-NER', label: 'Clinical entity model v2', kind: 'model', owner: 'AI/ML Engineering' },
+  { id: 'T-GOV', label: 'AI Governance Board', kind: 'team', owner: 'Omar Siddiqui' },
+  { id: 'T-PRIV', label: 'Privacy Office', kind: 'team' },
+  { id: 'T-DATA', label: 'Data Platform Team', kind: 'team' },
+  { id: 'S-CS', label: 'Copilot Studio tenant environment', kind: 'service', owner: 'AI/ML Engineering' },
+  { id: 'O-CYCLE', label: 'Protocol cycle time reduction', kind: 'outcome' },
+  { id: 'O-DEV', label: 'Deviation closure time reduction', kind: 'outcome' },
+];
+
+export const dependencies: Dependency[] = [
+  {
+    id: 'DEP-01', type: 'requires an input', fromId: 'P-102', toId: 'D-CDL', description: 'Site feasibility ranking needs read access to the clinical data lake extract for enrolment history.',
+    owner: 'Data Platform Team', requiredDate: '2026-09-11', position: 'breached',
+    actualImpact: 'Commitment C-03 slipped four weeks.', ownerReportedImpact: 'Owner reports the manual sheet workaround cannot scale beyond two studies.',
+    aiInferredExposure: 'C-02 and C-05 do not use this input; no further exposure found.', affectedCommitmentIds: ['C-03', 'C-04'], evidenceId: 'E-03',
+  },
+  {
+    id: 'DEP-02', type: 'requires an input', fromId: 'P-103', toId: 'D-CDL', description: 'Safety triage uses the same clinical data lake extract for case history.',
+    owner: 'Data Platform Team', requiredDate: '2026-11-01', position: 'attention',
+    actualImpact: 'None yet; required date not reached.', ownerReportedImpact: 'Owner expects the same access decision to apply.',
+    aiInferredExposure: 'If DEP-01 stays unresolved, C-05 shadow mode is exposed from 1 Nov.', affectedCommitmentIds: ['C-05'], evidenceId: 'E-03', reuseCandidate: true,
+  },
+  {
+    id: 'DEP-03', type: 'shares a service', fromId: 'P-201', toId: 'S-CS', description: 'Runs on the shared Copilot Studio production environment.',
+    owner: 'AI/ML Engineering', requiredDate: '2026-10-01', position: 'met',
+    actualImpact: 'None.', ownerReportedImpact: 'None.', aiInferredExposure: 'Environment capacity shared with P-101, P-301 and P-202.', affectedCommitmentIds: ['C-06', 'C-07'], evidenceId: 'E-05',
+  },
+  {
+    id: 'DEP-04', type: 'requires an input', fromId: 'P-201', toId: 'D-VEEVA', description: 'Pre-call briefs read HCP interaction history from the Veeva CRM extract.',
+    owner: 'Commercial Data Office', requiredDate: '2026-10-01', position: 'attention',
+    actualImpact: 'Read access live; write-back disabled.', ownerReportedImpact: 'Owner reports write-back is needed before the Germany cohort.',
+    aiInferredExposure: 'C-07 (Germany cohort) is exposed if privacy confirmation is not received by 24 Oct.', affectedCommitmentIds: ['C-07'], evidenceId: 'E-05',
+  },
+  {
+    id: 'DEP-05', type: 'depends on a team commitment', fromId: 'P-202', toId: 'T-GOV', description: 'Medical Information agent needs a second governance review after the promotional review returned it.',
+    owner: 'Omar Siddiqui', requiredDate: '2026-10-16', position: 'attention',
+    actualImpact: 'Sign-off commitment moved two weeks.', ownerReportedImpact: 'Board has a five-solution backlog.',
+    aiInferredExposure: 'Same backlog affects P-102, P-103, P-302 and P-303.', affectedCommitmentIds: ['C-08'], evidenceId: 'E-12',
+  },
+  {
+    id: 'DEP-06', type: 'depends on a team commitment', fromId: 'P-102', toId: 'T-GOV', description: 'Governance review pending for the feasibility agent.',
+    owner: 'Omar Siddiqui', requiredDate: '2026-10-20', position: 'attention',
+    actualImpact: 'None yet.', ownerReportedImpact: 'Review slot requested for week 43.', aiInferredExposure: 'C-03 exposed if the slot moves.', affectedCommitmentIds: ['C-03'], evidenceId: 'E-12',
+  },
+  {
+    id: 'DEP-07', type: 'requires an input', fromId: 'P-301', toId: 'D-SAP', description: 'Batch records from SAP for deviation context.',
+    owner: 'Manufacturing IT', requiredDate: '2026-06-01', position: 'met',
+    actualImpact: 'None.', ownerReportedImpact: 'None.', aiInferredExposure: 'P-303 could reuse this connection.', affectedCommitmentIds: ['C-10'], evidenceId: 'E-08', reuseCandidate: true,
+  },
+  {
+    id: 'DEP-08', type: 'requires an input', fromId: 'P-303', toId: 'D-SAP', description: 'Batch record review needs the same SAP batch record feed.',
+    owner: 'Manufacturing IT', requiredDate: '2026-10-01', position: 'reported',
+    actualImpact: 'Not confirmed; project update missing.', ownerReportedImpact: 'No update this week.', aiInferredExposure: 'Candidate reuse of the P-301 connection; owner assessment needed.', affectedCommitmentIds: ['C-12'], evidenceId: 'E-10', reuseCandidate: true,
+  },
+  {
+    id: 'DEP-09', type: 'requires an input', fromId: 'P-302', toId: 'D-TENDER', description: 'Europe tender pipeline feed added to scope on 29 Sep.',
+    owner: 'Commercial Operations Europe', requiredDate: '2026-10-16', position: 'attention',
+    actualImpact: 'Licence cost added to forecast.', ownerReportedImpact: 'Licence negotiation in progress.', aiInferredExposure: 'C-11 exposed if the licence is not signed by 23 Oct.', affectedCommitmentIds: ['C-11'], evidenceId: 'E-09',
+  },
+  {
+    id: 'DEP-10', type: 'shares a service', fromId: 'P-102', toId: 'M-GPT', description: 'Uses the shared Azure Foundry GPT-4.1 endpoint.',
+    owner: 'AI/ML Engineering', requiredDate: '2026-08-01', position: 'met',
+    actualImpact: 'None.', ownerReportedImpact: 'None.', aiInferredExposure: 'Shared with P-101, P-202, P-301, P-302.', affectedCommitmentIds: [], evidenceId: 'E-02',
+  },
+  {
+    id: 'DEP-11', type: 'shares a service', fromId: 'P-103', toId: 'M-NER', description: 'Uses the clinical entity model v2 for narrative pre-sorting.',
+    owner: 'AI/ML Engineering', requiredDate: '2026-09-01', position: 'met',
+    actualImpact: 'None.', ownerReportedImpact: 'None.', aiInferredExposure: 'P-101 could reuse this model for protocol entity tagging; not assessed.', affectedCommitmentIds: ['C-05'], evidenceId: 'E-04', reuseCandidate: true,
+  },
+  {
+    id: 'DEP-12', type: 'delivers a capability', fromId: 'P-401', toId: 'P-102', description: 'Context layer provides the governed route to the clinical data lake extract once access is approved.',
+    owner: 'Devon Carlisle', requiredDate: '2026-10-16', position: 'reported',
+    actualImpact: 'Waiting on DEP-01 decision.', ownerReportedImpact: 'Connector ready; access policy is the blocker.', aiInferredExposure: 'Resolves DEP-01 and DEP-02 together if approved.', affectedCommitmentIds: ['C-03', 'C-04'], evidenceId: 'E-11',
+  },
+  {
+    id: 'DEP-13', type: 'contributes to an outcome', fromId: 'P-101', toId: 'O-CYCLE', description: 'Protocol drafting contributes to the cycle time outcome.',
+    owner: 'Priya Natarajan', requiredDate: '2026-12-31', position: 'reported',
+    actualImpact: 'Not yet measured.', ownerReportedImpact: 'First measurement due end of Q4.', aiInferredExposure: 'None.', affectedCommitmentIds: [], evidenceId: 'E-14',
+  },
+  {
+    id: 'DEP-14', type: 'contributes to an outcome', fromId: 'P-301', toId: 'O-DEV', description: 'Deviation assistant contributes to deviation closure time.',
+    owner: 'Marta Kowalczyk', requiredDate: '2026-09-30', position: 'met',
+    actualImpact: 'Measured: 11.4 days to 7.9 days at Barnard Castle.', ownerReportedImpact: 'Confirmed by site QA.', aiInferredExposure: 'None.', affectedCommitmentIds: [], evidenceId: 'E-15',
+  },
+  {
+    id: 'DEP-15', type: 'depends on a team commitment', fromId: 'P-201', toId: 'T-PRIV', description: 'Privacy confirmation for Veeva write-back.',
+    owner: 'Privacy Office', requiredDate: '2026-10-24', position: 'attention',
+    actualImpact: 'None yet.', ownerReportedImpact: 'Assessment in progress.', aiInferredExposure: 'C-07 exposed.', affectedCommitmentIds: ['C-07'], evidenceId: 'E-05',
+  },
+  {
+    id: 'DEP-16', type: 'depends on a team commitment', fromId: 'P-102', toId: 'T-DATA', description: 'Access policy decision for the clinical data lake extract.',
+    owner: 'Data Platform Team', requiredDate: '2026-10-16', position: 'breached',
+    actualImpact: 'Decision overdue since 11 Sep.', ownerReportedImpact: 'Awaiting sponsor escalation.', aiInferredExposure: 'Same decision unblocks DEP-02.', affectedCommitmentIds: ['C-03', 'C-04'], evidenceId: 'E-03',
+  },
+];
