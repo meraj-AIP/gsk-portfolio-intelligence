@@ -1,7 +1,5 @@
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
@@ -28,7 +26,7 @@ export function DependencyNetwork() {
   const projects = useAllProjects();
   const filters = useDependencyFilters();
   const [focus, setFocus] = useUrlParam('focus');
-  const [network, setNetwork] = useUrlParam('network');
+  const [network] = useUrlParam('network');
   const smallScreen = useMediaQuery(useTheme().breakpoints.down('sm'));
   const view = network === 'list' ? 'list' : 'graph';
 
@@ -45,18 +43,13 @@ export function DependencyNetwork() {
   const detail = selected ? <DependencyDetail key={selected.id} dependency={selected} nodes={nodes.data} /> : null;
 
   return (
-    <Stack sx={{ gap: 1 }}>
-      <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
-        <ToggleButtonGroup size="small" exclusive value={view} aria-label="Network view" onChange={(_, v: 'graph' | 'list' | null) => v && setNetwork(v)}>
-          <ToggleButton value="graph">Graph</ToggleButton><ToggleButton value="list">Accessible list</ToggleButton>
-        </ToggleButtonGroup>
-        <Typography variant="caption">Dashed lines are reuse candidates awaiting owner assessment. Critical path is not calculated: no method has been agreed.</Typography>
-      </Stack>
+    <Stack sx={{ gap: 2 }}>
       <DependencyFilters filters={filters} projects={projects.data.filter((p) => all || inScopeIds.has(p.id))} owners={[...new Set(scoped.map((d) => d.owner))].sort()}
         listView={view === 'list'} summary={`${visible.length} of ${scoped.length} relationships in scope shown`} />
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
         <Grid size={{ xs: 12, lg: 8 }}>
-          <SectionCard title={view === 'graph' ? 'Relationship graph' : 'Relationships'} dense>
+          <SectionCard title={view === 'graph' ? 'Relationship graph' : 'Relationships'} dense
+            subtitle="Dashed lines are reuse candidates awaiting owner assessment. Critical path is not calculated: no method has been agreed.">
             {view === 'list'
               ? <DependencyList query={{ scope: project || scope.portfolio, owner, type, before }} nodes={nodes.data} selectedId={focus || null} onSelect={setFocus} />
               : !scoped.length ? <EmptyState title="No relationships in this portfolio" hint="Choose another portfolio in the review bar." />
@@ -65,7 +58,7 @@ export function DependencyNetwork() {
         </Grid>
         {smallScreen ? <DependencyDialog open={Boolean(selected)} onClose={() => setFocus(null)}>{detail}</DependencyDialog> : (
           <Grid size={{ xs: 12, lg: 4 }}>
-            <SectionCard title="Selected relationship">
+            <SectionCard title="Selected relationship" dense>
               {detail ?? <Typography variant="body2" sx={{ color: 'text.secondary' }}>Select a line in the graph or a row in the list. In the graph, Tab moves between relationships and Enter selects one.</Typography>}
             </SectionCard>
           </Grid>

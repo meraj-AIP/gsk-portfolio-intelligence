@@ -62,8 +62,8 @@ export function ActionUpdateDialog({ action, onClose }: { action: Action; onClos
           {status === 'blocked' ? <TextField label="Blocker" value={blocker} onChange={(e) => setBlocker(e.target.value)} required /> : null}
           {needsEvidence ? <TextField label="Completion evidence" value={evidence} onChange={(e) => setEvidence(e.target.value)} required helperText="Reference to the record that shows the action was done" /> : null}
           <TextField label="Note" value={note} onChange={(e) => setNote(e.target.value)} multiline minRows={2} />
-          <Typography variant="caption">History (version {action.version})</Typography>
-          {action.history.map((h, i) => <Typography key={i} variant="body2">{formatDate(h.date)}, {h.by ?? 'not recorded'}: {h.note}</Typography>)}
+          <Typography variant="overline" component="p">History, version {action.version}</Typography>
+          {action.history.map((h, i) => <Typography key={i} variant="body2"><strong>{formatDate(h.date)}</strong>, {h.by ?? 'not recorded'}: {h.note}</Typography>)}
           {conflict ? (
             <Alert severity="warning">Someone else updated this action while you were editing. It is now version {action.version}; the latest history is shown above. Your edits are kept. Save again to apply them on top of the latest version.</Alert>
           ) : update.error ? <Alert severity="error">{update.error.message}</Alert> : null}
@@ -71,7 +71,7 @@ export function ActionUpdateDialog({ action, onClose }: { action: Action; onClos
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button variant="contained" disabled={update.isPending || (status === 'blocked' && !blocker) || (needsEvidence && !evidence)}
+        <Button variant="contained" color="secondary" disabled={update.isPending || (status === 'blocked' && !blocker) || (needsEvidence && !evidence)}
           onClick={() => { setBaseVersion(action.version); void save(action.version); }}>
           {conflict ? `Save over version ${action.version}` : 'Save update'}
         </Button>

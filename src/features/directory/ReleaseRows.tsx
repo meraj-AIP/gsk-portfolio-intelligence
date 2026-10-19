@@ -8,6 +8,8 @@ import type { Release } from '@/shared/types/domain';
 import { EntityLink } from '@/shared/components/EntityLink';
 import { EmptyState } from '@/shared/components/StatePanels';
 import { formatDate } from '@/shared/lib/format';
+import { AvatarName } from '@/shared/components/ui/AvatarName';
+import { StatusChip } from '@/shared/components/ui/StatusChip';
 
 export function ReleaseRows({ releases }: { releases: Release[] }) {
   if (!releases.length) return <EmptyState title="No releases recorded" />;
@@ -23,10 +25,10 @@ export function ReleaseRows({ releases }: { releases: Release[] }) {
             return (
               <TableRow key={r.id} hover>
                 <TableCell><EntityLink id={r.id} label={r.capability} /></TableCell>
-                <TableCell>{r.owner}</TableCell>
+                <TableCell><AvatarName name={r.owner} size={24} /></TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{planned ? formatDate(planned.date) : 'n/a'}</TableCell>
-                <TableCell sx={{ whiteSpace: 'nowrap' }}>{withdrawn ? `Withdrawn ${formatDate(withdrawn.date)}` : avail ? formatDate(avail.date) : 'Not yet'}</TableCell>
-                <TableCell>{r.adoption ? `${r.adoption.activeUsers} active, ${r.adoption.period}${r.adoption.early ? ' (early)' : ''}` : 'No evidence'}</TableCell>
+                <TableCell sx={{ whiteSpace: 'nowrap' }}>{withdrawn ? <StatusChip tone="danger" dot={false}>Withdrawn {formatDate(withdrawn.date)}</StatusChip> : avail ? <StatusChip tone="success">{formatDate(avail.date)}</StatusChip> : <StatusChip tone="neutral" dot={false}>Not yet</StatusChip>}</TableCell>
+                <TableCell sx={{ fontVariantNumeric: 'tabular-nums' }}>{r.adoption ? `${r.adoption.activeUsers} active, ${r.adoption.period}${r.adoption.early ? ' (early)' : ''}` : 'No evidence'}</TableCell>
                 <TableCell>{r.outstandingConditions.join('; ') || 'None'}</TableCell>
               </TableRow>
             );

@@ -14,7 +14,7 @@ import { useUrlParam } from '@/shared/hooks/useUrlState';
 import { formatDate } from '@/shared/lib/format';
 import { LIFECYCLE } from '@/shared/lib/journey';
 import type { Finding } from '@/shared/types/domain';
-import { MatrixCard, MatrixMessage, RowTitle } from './MatrixCard';
+import { MatrixCard, MatrixMessage, RowTitle } from '@/shared/components/ui/MatrixCard';
 import { Aging, Pager, capitalise, useListParams } from './viewState';
 
 const awaiting = (f: Finding) => f.responses.every((r) => r.findingVersion !== f.version);

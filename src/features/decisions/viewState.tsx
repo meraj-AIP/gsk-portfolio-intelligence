@@ -6,7 +6,7 @@ import { StatusChip, type Tone } from '@/shared/components/ui/StatusChip';
 import { useUrlParam } from '@/shared/hooks/useUrlState';
 import { daysBetween } from '@/shared/lib/format';
 import type { Action, Page } from '@/shared/types/domain';
-import { MatrixPager } from './MatrixPager';
+import { MatrixPager } from '@/shared/components/ui/MatrixPager';
 
 export const PAGE_SIZE = 10;
 

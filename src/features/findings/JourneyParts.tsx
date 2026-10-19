@@ -2,11 +2,8 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { alpha } from '@mui/material/styles';
 import type { ReactNode } from 'react';
-import { StatusChip, type Tone } from '@/shared/components/ui/StatusChip';
 import { LIFECYCLE, type Lifecycle } from '@/shared/lib/journey';
-import type { StatementType } from '@/shared/types/domain';
 
 /** One numbered step of the journey as a reference card. The number keeps the reading order obvious when a step is short. */
 export function Step({ n, title, lead, children }: { n: number; title: string; lead?: string; children: ReactNode }) {
@@ -30,30 +27,6 @@ export function Field({ label, children }: { label: string; children: ReactNode 
     <Box>
       <Typography variant="overline" component="p" sx={{ mb: 0.25 }}>{label}</Typography>
       <Typography variant="body2" component="div">{children}</Typography>
-    </Box>
-  );
-}
-
-export const STATEMENT_LABEL: Record<StatementType, string> = {
-  'reported fact': 'Reported fact',
-  'calculated result': 'Calculated result',
-  'AI interpretation': 'AI interpretation, not a reported fact',
-};
-
-/** One tone per basis across the product: reported fact neutral, calculated result info, AI interpretation accent. */
-export const STATEMENT_TONE: Record<StatementType, Tone> = { 'reported fact': 'neutral', 'calculated result': 'info', 'AI interpretation': 'accent' };
-
-export function StatementChip({ type, label }: { type: StatementType; label?: string }) {
-  return <StatusChip tone={STATEMENT_TONE[type]} square>{label ?? STATEMENT_LABEL[type]}</StatusChip>;
-}
-
-/** Frames a statement with its basis written above it, so a calculation or interpretation never reads as a reported value. */
-export function StatementFrame({ type, label, children }: { type: StatementType; label?: string; children: ReactNode }) {
-  const tone = STATEMENT_TONE[type];
-  return (
-    <Box sx={(t) => ({ borderRadius: 1, p: 1.5, bgcolor: alpha(t.palette.tint[tone].bg, 0.6), border: `1px solid ${alpha(t.palette.tint[tone].fg, 0.25)}`, borderLeft: `3px solid ${t.palette.tint[tone].fg}` })}>
-      <Typography variant="overline" component="p" sx={(t) => ({ mb: 0.75, color: t.palette.tint[tone].fg })}>{label ?? STATEMENT_LABEL[type]}</Typography>
-      {children}
     </Box>
   );
 }

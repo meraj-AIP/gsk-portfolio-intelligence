@@ -10,8 +10,12 @@ import { EntityLink } from '@/shared/components/EntityLink';
 import { EmptyState, ErrorState, LoadingState } from '@/shared/components/StatePanels';
 import { formatDate } from '@/shared/lib/format';
 import type { TechnicalIssue } from '@/shared/types/workflow';
+import { AvatarName } from '@/shared/components/ui/AvatarName';
+import { StatusChip, type Tone } from '@/shared/components/ui/StatusChip';
+import { sentence } from './directoryModel';
 
-const SEVERITY_COLOUR: Record<TechnicalIssue['severity'], string> = { high: 'condition.breached', medium: 'condition.attention', low: 'text.secondary' };
+const STATUS_TONE: Record<TechnicalIssue['status'], Tone> = { open: 'warning', mitigated: 'info', resolved: 'success' };
+const SEVERITY_TONE: Record<TechnicalIssue['severity'], Tone> = { high: 'danger', medium: 'warning', low: 'neutral' };
 
 /** Technical issues are their own delivery records, raised by the project, not inferred from dependencies. */
 export function TechnicalIssues({ projectId }: { projectId: string }) {
@@ -27,11 +31,11 @@ export function TechnicalIssues({ projectId }: { projectId: string }) {
         <TableBody>
           {rows.map((i) => (
             <TableRow key={i.id}>
-              <TableCell><Typography variant="body2">{i.title}</Typography><Typography variant="caption">{i.id}</Typography></TableCell>
-              <TableCell><Typography variant="caption" sx={{ color: SEVERITY_COLOUR[i.severity], fontWeight: 700 }}>{i.severity}</Typography></TableCell>
-              <TableCell>{i.status}</TableCell>
+              <TableCell><Typography variant="body2" sx={{ fontWeight: 600 }}>{i.title}</Typography><Typography variant="caption" sx={{ fontFamily: 'monospace' }}>{i.id}</Typography></TableCell>
+              <TableCell><StatusChip tone={SEVERITY_TONE[i.severity]} dot={false}>{sentence(i.severity)}</StatusChip></TableCell>
+              <TableCell><StatusChip tone={STATUS_TONE[i.status]} dot={false}>{sentence(i.status)}</StatusChip></TableCell>
               <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDate(i.raised)}</TableCell>
-              <TableCell>{i.owner}</TableCell>
+              <TableCell><AvatarName name={i.owner} size={24} /></TableCell>
               <TableCell>{i.affectedCommitmentIds.join(', ') || 'None'}</TableCell>
               <TableCell sx={{ maxWidth: 260 }}><Typography variant="caption" sx={{ color: 'text.primary' }}>{i.deliveryEffect}</Typography></TableCell>
               <TableCell><EntityLink id={i.evidenceId} /></TableCell>

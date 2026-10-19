@@ -1,6 +1,5 @@
 import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -14,6 +13,7 @@ import { useUrlParam } from '@/shared/hooks/useUrlState';
 import { can } from '@/shared/lib/permissions';
 import type { Briefing, BriefingStatus } from '@/shared/types/domain';
 import { BriefingActions } from './BriefingActions';
+import { BriefingEyebrow, BriefingPicker } from './BriefingHeader';
 import { BriefingCanvas } from './BriefingCanvas';
 import { CanvasFooter, sectionExtra } from './CanvasExtras';
 import { BriefingControls } from './BriefingControls';
@@ -62,7 +62,7 @@ export function BriefingPage() {
   if (!draft) {
     return (
       <>
-        <PageHeader title="Briefing preparation" actions={can(user, 'prepare briefing') ? <Button variant="contained" onClick={() => setCreating(true)}>New briefing</Button> : undefined} />
+        <PageHeader title="Briefing preparation" actions={can(user, 'prepare briefing') ? <Button variant="contained" color="secondary" onClick={() => setCreating(true)}>New briefing</Button> : undefined} />
         <EmptyState title={selectedId ? `Briefing ${selectedId} was not found` : 'No briefings yet'} hint="The portfolio lead starts a briefing from a template; it then appears here." />
         {dialog}
       </>
@@ -73,13 +73,10 @@ export function BriefingPage() {
 
   return (
     <>
-      <PageHeader title="Briefing preparation" subtitle="Audience, scope, period and snapshot drive what can be shown. Publishing creates a versioned snapshot; later corrections become a revision."
+      <PageHeader eyebrow={<BriefingEyebrow b={draft} />} title="Briefing preparation"
+        subtitle={`${draft.audience}, ${draft.scope}, ${draft.period}. Publishing creates a versioned snapshot; later corrections become a revision.`}
         actions={<BriefingActions briefing={draft} editable={editable} busy={flow.busy} preview={preview} onTogglePreview={() => setPreview((v) => !v)} onSave={flow.saveDraft} onMove={requestMove} onNew={() => setCreating(true)} />}
-        meta={<Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap' }}>
-          <Chip label={`${draft.status} v${draft.version}`} variant="outlined" />
-          <Chip label={`Revision ${draft.revision}, updated ${draft.updatedAt}`} variant="outlined" />
-          {briefings.data.filter((b) => b.id !== draft.id).map((b) => <Chip key={b.id} label={`${b.period}, ${b.audience}: ${b.status} v${b.version}`} variant="outlined" onClick={() => open(b)} />)}
-        </Stack>} />
+        meta={<BriefingPicker all={briefings.data} current={draft.id} onOpen={open} />} />
       <SnapshotStamp briefing={draft} />
       {flow.error ? (
         <Alert severity="error" sx={{ mb: 2 }} action={flow.conflict ? <Button color="inherit" size="small" onClick={() => void reload()}>Reload</Button> : undefined}>
@@ -87,19 +84,21 @@ export function BriefingPage() {
         </Alert>
       ) : null}
       {flow.saved ? <Alert severity="success" sx={{ mb: 2 }}>Briefing saved with its selected records, evidence references, audience and snapshot.</Alert> : null}
-      <Grid container spacing={2}>
+      <Grid container spacing={3}>
         <Grid size={{ xs: 12, lg: 4 }}>
-          <Stack sx={{ gap: 2 }}>
+          <Stack sx={{ gap: 3 }}>
             {frozen ? <SectionCard title="Published version"><PublishedBriefingPanel briefing={draft} onRevised={open} /></SectionCard> : null}
             <SectionCard title="Export"><BriefingExport briefing={draft} resolve={resolve} extras={extras.extras} /></SectionCard>
             <BriefingControls key={draft.id} draft={draft} editable={editable} resolve={resolve} onChange={setDraft} />
           </Stack>
         </Grid>
         <Grid size={{ xs: 12, lg: 8 }}>
-          <SectionCard title={frozen ? 'Published content' : preview ? `Preview for ${draft.audience}` : 'Briefing canvas'} actions={<Typography variant="caption">{draft.scope}, {draft.period}</Typography>}>
-            <BriefingCanvas sections={shownSections(draft)} resolve={resolve} readOnly={preview || !editable} audience={draft.audience} onChange={(sections) => setDraft({ ...draft, sections })}
-              extra={sectionExtra(draft, extras, editable && !preview)} footer={<CanvasFooter sections={shownSections(draft)} state={extras} />} />
-          </SectionCard>
+          <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'baseline', mb: 1.5, gap: 1, flexWrap: 'wrap' }}>
+            <Typography variant="h2">{frozen ? 'Published content' : preview ? `Preview for ${draft.audience}` : 'Briefing canvas'}</Typography>
+            <Typography variant="overline">{draft.scope}, {draft.period}</Typography>
+          </Stack>
+          <BriefingCanvas sections={shownSections(draft)} resolve={resolve} readOnly={preview || !editable} audience={draft.audience} onChange={(sections) => setDraft({ ...draft, sections })}
+            extra={sectionExtra(draft, extras, editable && !preview)} footer={<CanvasFooter sections={shownSections(draft)} state={extras} />} />
         </Grid>
       </Grid>
       {dialog}

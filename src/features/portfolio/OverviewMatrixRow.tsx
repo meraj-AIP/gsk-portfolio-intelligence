@@ -21,7 +21,7 @@ import { usePanelHref } from './OverviewLinks';
 export function gateSummary(p: Project): string {
   const open = p.gates.find((g) => g.status !== 'passed');
   if (open) return `${open.name} ${open.status}`;
-  return p.gates.length ? `All ${p.gates.length} gates passed` : 'No gates recorded';
+  return p.gates.length === 1 ? 'The one gate passed' : p.gates.length ? `All ${p.gates.length} gates passed` : 'No gates recorded';
 }
 
 export function OverviewMatrixRow({ project: p, programme }: { project: Project; programme: string }) {

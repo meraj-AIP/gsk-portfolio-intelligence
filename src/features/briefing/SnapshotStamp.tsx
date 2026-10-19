@@ -15,8 +15,11 @@ export function SnapshotStamp({ briefing }: { briefing: Briefing }) {
   const snap = snapshots.data.find((s) => s.id === briefing.snapshotId);
   const warnings = snapshotWarnings(briefing, snap, viewSnapshot);
   return (
-    <Stack sx={{ gap: 1, mb: 2 }}>
-      <Typography variant="body2">{stampText(snap, briefing.snapshotId)}</Typography>
+    <Stack sx={{ gap: 1, mb: 3 }}>
+      <Stack direction="row" sx={(t) => ({ gap: 1.5, alignItems: 'center', flexWrap: 'wrap', px: 2, py: 1.25, borderRadius: 2, bgcolor: t.palette.background.paper, border: `1px solid ${t.palette.divider}` })}>
+        <Typography variant="overline">Source snapshot</Typography>
+        <Typography variant="body2">{stampText(snap, briefing.snapshotId)}</Typography>
+      </Stack>
       {warnings.length ? <Alert severity="warning">{warnings.join(' ')}</Alert> : null}
     </Stack>
   );

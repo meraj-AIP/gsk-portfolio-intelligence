@@ -50,7 +50,7 @@ export function RecordDecisionDialog({ onClose }: { onClose: () => void }) {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>{record.data ? 'Close' : 'Cancel'}</Button>
-        {record.data ? null : <Button variant="contained" disabled={!question.trim() || !conclusion.trim() || record.isPending} onClick={submit}>Record decision</Button>}
+        {record.data ? null : <Button variant="contained" color="secondary" disabled={!question.trim() || !conclusion.trim() || record.isPending} onClick={submit}>Record decision</Button>}
       </DialogActions>
     </Dialog>
   );

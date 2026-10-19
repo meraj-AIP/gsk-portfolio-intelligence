@@ -8,6 +8,7 @@ import { weekLabel } from '@/app/context/weekLabel';
 import { useSinceReview } from '@/shared/api/hooks';
 import { useUrlParam } from '@/shared/hooks/useUrlState';
 import { ErrorState, LoadingState } from '@/shared/components/StatePanels';
+import { StatusChip } from '@/shared/components/ui/StatusChip';
 import type { Finding } from '@/shared/types/domain';
 
 type Props = { findings: Finding[]; projects: { id: string; name: string }[] };
@@ -17,7 +18,15 @@ export function SinceReviewStrip({ findings, projects }: Props) {
   const { scope, comparisonSnapshot, viewSnapshot } = useReview();
   const since = useSinceReview(scope.comparisonSnapshotId, scope.viewSnapshotId);
   const [, openFinding] = useUrlParam('finding');
-  const wrap = (body: ReactNode) => <Paper sx={{ p: 1.5, mb: 2 }}><Typography variant="subtitle2" sx={{ mb: 0.5 }}>Since last review</Typography>{body}</Paper>;
+  const wrap = (body: ReactNode, chips?: ReactNode) => (
+    <Paper sx={{ p: 2, mb: 3, borderRadius: 2 }}>
+      <Stack direction="row" sx={{ alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+        <Typography variant="overline">Since last review</Typography>
+        {chips}
+      </Stack>
+      {body}
+    </Paper>
+  );
 
   if (!comparisonSnapshot) return wrap(<Typography variant="body2" sx={{ color: 'text.secondary' }}>There is no earlier review to compare with.</Typography>);
   if (since.isError) return wrap(<ErrorState message="Changes since the last review could not be loaded." onRetry={() => void since.refetch()} />);
@@ -44,14 +53,20 @@ export function SinceReviewStrip({ findings, projects }: Props) {
   const range = `${weekLabel(comparisonSnapshot)} to ${weekLabel(viewSnapshot)}`;
 
   if (!groups.length && !moves.length) return wrap(<Typography variant="body2" sx={{ color: 'text.secondary' }}>Nothing changed between {range}.</Typography>);
+  const chips = (
+    <>
+      <StatusChip tone="info" dot={false}>{added.length} new</StatusChip>
+      <StatusChip tone="warning" dot={false}>{changed.length} changed</StatusChip>
+      <StatusChip tone="success" dot={false}>{resolved.length} resolved</StatusChip>
+      <StatusChip tone="neutral" dot={false}>{moves.length} position change{moves.length === 1 ? '' : 's'}</StatusChip>
+    </>
+  );
   return wrap(
-    <Stack sx={{ gap: 0.5 }}>
-      <Typography variant="body2">
-        From {range}: {added.length} new, {changed.length} changed and {resolved.length} resolved finding{resolved.length === 1 ? '' : 's'}; {moves.length} position change{moves.length === 1 ? '' : 's'}.
-      </Typography>
+    <Stack sx={{ gap: 0.75 }}>
+      <Typography variant="body2" sx={{ color: 'text.secondary' }}>From {range}.</Typography>
       {groups.map((g) => (
         <Stack key={g.label} direction="row" sx={{ gap: 1, flexWrap: 'wrap', alignItems: 'baseline' }}>
-          <Typography variant="caption" sx={{ minWidth: 72 }}>{g.label}</Typography>
+          <Typography variant="overline" sx={{ minWidth: 80 }}>{g.label}</Typography>
           {g.ids}
         </Stack>
       ))}
@@ -59,5 +74,6 @@ export function SinceReviewStrip({ findings, projects }: Props) {
         <Typography key={`${m.projectId}-${m.dimension}`} variant="body2">{name(m.projectId)}: {m.dimension} {m.verb} from {m.from} to {m.to}.</Typography>
       ))}
     </Stack>,
+    chips,
   );
 }

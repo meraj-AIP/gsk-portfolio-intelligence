@@ -1,8 +1,9 @@
+import type { Tone } from '@/shared/components/ui/StatusChip';
 import type { Source, SourceIssue } from '@/shared/types/domain';
 
-export const HEALTH: Record<Source['connectionHealth'], 'success' | 'warning' | 'error'> = { healthy: 'success', degraded: 'warning', failed: 'error' };
-export const QUALITY: Record<Source['contentQuality'], 'success' | 'warning' | 'error'> = { good: 'success', gaps: 'warning', conflicts: 'error' };
-export const STATUS_COLOR: Record<NonNullable<SourceIssue['status']>, 'warning' | 'info' | 'success'> = { open: 'warning', 'correction requested': 'info', resolved: 'success' };
+export const HEALTH: Record<Source['connectionHealth'], Tone> = { healthy: 'success', degraded: 'warning', failed: 'danger' };
+export const QUALITY: Record<Source['contentQuality'], Tone> = { good: 'success', gaps: 'warning', conflicts: 'danger' };
+export const STATUS_TONE: Record<NonNullable<SourceIssue['status']>, Tone> = { open: 'warning', 'correction requested': 'info', resolved: 'success' };
 
 export const KIND_LABEL: Record<NonNullable<SourceIssue['kind']>, string> = {
   gap: 'Missing value', conflict: 'Conflicting values', mapping: 'Mapping to confirm', failure: 'Ingestion failure', flag: 'Flagged inconsistency',
@@ -17,3 +18,6 @@ export const issueStatus = (i: SourceIssue): NonNullable<SourceIssue['status']> 
 export const candidateValues = (i: SourceIssue): string[] => (i.conflictingValues ?? '').split(';').map((v) => v.trim()).filter(Boolean);
 
 export const needsRetry = (s: Source) => s.connectionHealth !== 'healthy';
+
+/** Issues still needing someone: anything not resolved, wherever it came from. */
+export const openIssues = (sources: Source[]) => sources.flatMap((s) => s.issues.filter((i) => issueStatus(i) !== 'resolved'));

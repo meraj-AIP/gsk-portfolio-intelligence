@@ -22,7 +22,7 @@ export function BriefingActions({ briefing, editable, busy, preview, onTogglePre
         {canPrepare ? <Button variant="outlined" onClick={onNew}>New briefing</Button> : null}
         {editable ? <Button variant="outlined" onClick={onTogglePreview}>{preview ? 'Edit' : 'Preview'}</Button> : null}
         {editable ? <Button variant="outlined" disabled={busy} onClick={onSave}>Save draft</Button> : null}
-        {moves.map((m) => <Button key={m.to} variant={m.primary ? 'contained' : 'outlined'} disabled={busy} onClick={() => onMove(m.to)}>{m.label}</Button>)}
+        {moves.map((m) => <Button key={m.to} variant={m.primary ? 'contained' : 'outlined'} color={m.primary ? 'secondary' : 'primary'} disabled={busy} onClick={() => onMove(m.to)}>{m.label}</Button>)}
       </Stack>
       {!canPrepare ? <Typography variant="caption">Only the portfolio lead prepares, approves and publishes briefings. You can read and add items.</Typography> : null}
     </Stack>

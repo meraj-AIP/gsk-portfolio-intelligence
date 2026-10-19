@@ -3,7 +3,8 @@ import Typography from '@mui/material/Typography';
 import { EvidenceInline } from '@/features/evidence/EvidenceInline';
 import { EntityLink } from '@/shared/components/EntityLink';
 import type { Evidence, Finding } from '@/shared/types/domain';
-import { Field, Step, StatementFrame, muted } from './JourneyParts';
+import { Field, Step, muted } from './JourneyParts';
+import { StatementFrame } from '@/shared/components/ui/Statement';
 
 function Calculation({ f }: { f: Finding }) {
   if (f.statementType !== 'calculated result') return null;
@@ -30,7 +31,7 @@ export function StepEvidence({ f, evidence }: { f: Finding; evidence: Evidence[]
           <Calculation f={f} />
           {n ? (
             <Stack sx={{ gap: 1 }}>
-              <Typography variant="caption">Supported by</Typography>
+              <Typography variant="overline" component="p">Supported by</Typography>
               {f.evidenceIds.map((id) => <EvidenceInline key={id} id={id} record={evidence.find((e) => e.id === id)} />)}
             </Stack>
           ) : <Typography variant="body2" sx={muted}>No supporting record.</Typography>}

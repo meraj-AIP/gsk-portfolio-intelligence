@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+import { StatusChip } from '@/shared/components/ui/StatusChip';
 import { formatDate } from '@/shared/lib/format';
 import type { Evidence, Finding } from '@/shared/types/domain';
 import { muted } from './JourneyParts';
@@ -29,12 +29,12 @@ export function ResponseHistory({ f, evidence }: { f: Finding; evidence: Evidenc
   return (
     <Stack sx={{ gap: 1 }}>
       {f.responses.map((r) => (
-        <Box key={r.id} sx={{ p: 1, border: 1, borderColor: 'divider', borderRadius: 0.5 }}>
-          <Typography variant="overline" sx={{ display: 'block', lineHeight: 1.6, ...muted }}>Owner conclusion</Typography>
+        <Box key={r.id} sx={(t) => ({ p: 1.25, borderRadius: 1, bgcolor: t.palette.tint.neutral.bg, border: `1px solid ${t.palette.divider}` })}>
+          <Typography variant="overline" component="p">Owner conclusion</Typography>
           <Stack direction="row" sx={{ gap: 1, alignItems: 'center', flexWrap: 'wrap' }}>
             <Typography variant="body2"><strong>{r.action}</strong> by {r.reviewer}, {formatDate(r.date)}, against finding version {r.findingVersion}</Typography>
-            {r.action === 'challenged' ? <Chip size="small" color="warning" variant="outlined" label="Challenged, kept on record" /> : null}
-            {r.findingVersion !== f.version ? <Chip size="small" variant="outlined" label="Finding has changed since" /> : null}
+            {r.action === 'challenged' ? <StatusChip tone="warning">Challenged, kept on record</StatusChip> : null}
+            {r.findingVersion !== f.version ? <StatusChip tone="neutral" dot={false}>Finding has changed since</StatusChip> : null}
           </Stack>
           <Typography variant="body2">{r.note}</Typography>
           <Typography variant="caption">{referredTo(evidence, r.date)}</Typography>

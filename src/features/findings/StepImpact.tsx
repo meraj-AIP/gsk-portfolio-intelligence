@@ -6,7 +6,8 @@ import { EntityLink } from '@/shared/components/EntityLink';
 import { formatDate } from '@/shared/lib/format';
 import type { Impact, ImpactRow } from '@/shared/lib/journey';
 import type { Evidence } from '@/shared/types/domain';
-import { Step, StatementFrame, muted } from './JourneyParts';
+import { Step, muted } from './JourneyParts';
+import { StatementFrame } from '@/shared/components/ui/Statement';
 
 function Row({ r, evidence }: { r: ImpactRow; evidence: Evidence[] }) {
   return (

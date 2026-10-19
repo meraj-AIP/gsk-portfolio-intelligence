@@ -117,4 +117,14 @@ export const dependencies: Dependency[] = [
     owner: 'Data Platform Team', requiredDate: '2026-10-16', position: 'breached',
     actualImpact: 'Decision overdue since 11 Sep.', ownerReportedImpact: 'Awaiting sponsor escalation.', aiInferredExposure: 'Same decision unblocks DEP-02.', affectedCommitmentIds: ['C-03', 'C-04'], evidenceId: 'E-03',
   },
+  {
+    id: 'DEP-17', type: 'delivers a capability', fromId: 'P-401', toId: 'P-101', description: 'Context layer serves prior protocols and the latest template set to the drafting assistant.',
+    owner: 'Devon Carlisle', requiredDate: '2026-09-15', position: 'met',
+    actualImpact: 'None.', ownerReportedImpact: 'Serving since release 1.2.', aiInferredExposure: 'No exposure found.', affectedCommitmentIds: ['C-01'], evidenceId: 'E-11',
+  },
+  {
+    id: 'DEP-18', type: 'delivers a capability', fromId: 'P-401', toId: 'P-301', description: 'Context layer serves site deviation history to the investigation assistant.',
+    owner: 'Devon Carlisle', requiredDate: '2026-09-30', position: 'met',
+    actualImpact: 'None.', ownerReportedImpact: 'Serving Barnard Castle and Ware.', aiInferredExposure: 'No exposure found.', affectedCommitmentIds: ['C-10'], evidenceId: 'E-11',
+  },
 ];

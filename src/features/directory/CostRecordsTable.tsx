@@ -12,7 +12,9 @@ import { useAuth } from '@/features/auth/AuthContext';
 import { formatDate, gbp } from '@/shared/lib/format';
 import { can } from '@/shared/lib/permissions';
 import type { CostRecord } from '@/shared/types/domain';
+import { StatusChip } from '@/shared/components/ui/StatusChip';
 import { CostRecordDialog, type CostAction } from './CostRecordDialog';
+import { sentence } from './directoryModel';
 
 const num = { fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' } as const;
 
@@ -32,14 +34,14 @@ export function CostRecordsTable({ records }: { records: CostRecord[] }) {
             const shared = r.allocationBasis !== 'Direct';
             return (
               <TableRow key={r.id}>
-                <TableCell><Typography variant="body2">{r.id}</Typography><Typography variant="caption">{r.projectId}, funded by {r.fundedBy}</Typography></TableCell>
-                <TableCell><Typography variant="caption" sx={{ color: 'text.primary' }}>{r.kind}, {r.period}</Typography></TableCell>
-                <TableCell align="right" sx={num}>{gbp(r.amount)}</TableCell>
+                <TableCell><Typography variant="body2" sx={{ fontWeight: 600, fontFamily: 'monospace' }}>{r.id}</Typography><Typography variant="caption">{r.projectId}, funded by {r.fundedBy}</Typography></TableCell>
+                <TableCell><StatusChip tone={r.kind === 'actual' ? 'info' : 'neutral'} dot={false}>{sentence(r.kind)}</StatusChip><Typography variant="caption" sx={{ display: 'block', mt: 0.25 }}>{r.period}</Typography></TableCell>
+                <TableCell align="right" sx={{ ...num, fontWeight: 600 }}>{gbp(r.amount)}</TableCell>
                 <TableCell sx={{ maxWidth: 240 }}>
                   <Typography variant="caption" sx={{ display: 'block', color: 'text.primary' }}>{r.allocationBasis}</Typography>
-                  {shared ? <Typography variant="caption" sx={{ color: r.allocationConfirmed ? 'text.secondary' : 'condition.attention' }}>{r.allocationConfirmed ? `Confirmed by ${r.allocationConfirmed.by}, ${formatDate(r.allocationConfirmed.date)}` : 'Shared, basis not confirmed'}</Typography> : null}
+                  {shared ? (r.allocationConfirmed ? <Typography variant="caption">Confirmed by {r.allocationConfirmed.by}, {formatDate(r.allocationConfirmed.date)}</Typography> : <StatusChip tone="warning">Shared, basis not confirmed</StatusChip>) : null}
                 </TableCell>
-                <TableCell sx={{ maxWidth: 240 }}><Typography variant="caption">{r.reconciliation ? `${r.reconciliation.by}, ${formatDate(r.reconciliation.date)}. ${r.reconciliation.note}` : 'Not reconciled'}</Typography></TableCell>
+                <TableCell sx={{ maxWidth: 240 }}>{r.reconciliation ? <Typography variant="caption">{r.reconciliation.by}, {formatDate(r.reconciliation.date)}. {r.reconciliation.note}</Typography> : <StatusChip tone="neutral" dot={false}>Not reconciled</StatusChip>}</TableCell>
                 <TableCell>
                   <Stack direction="row" sx={{ gap: 0.5, justifyContent: 'flex-end' }}>
                     {shared && canConfirm ? <Button size="small" onClick={() => setOpen({ record: r, action: 'confirm' })}>Confirm basis</Button> : null}

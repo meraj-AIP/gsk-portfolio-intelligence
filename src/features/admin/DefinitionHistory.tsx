@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -6,7 +7,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { useSnapshots } from '@/shared/api/hooks';
-import { LoadingState } from '@/shared/components/StatePanels';
+import { ErrorState, LoadingState } from '@/shared/components/StatePanels';
+import { AvatarName } from '@/shared/components/ui/AvatarName';
+import { StatusChip } from '@/shared/components/ui/StatusChip';
 import { formatDate } from '@/shared/lib/format';
 import type { Definition } from '@/shared/types/domain';
 
@@ -17,36 +20,35 @@ export function DefinitionHistory({ def }: { def: Definition }) {
   const closed = (snapshots.data ?? []).filter((s) => s.status !== 'open');
 
   return (
-    <Stack sx={{ gap: 1.5 }}>
-      <div>
-        <Typography variant="caption">Version history</Typography>
-        <Table size="small">
+    <Stack sx={{ gap: 2 }}>
+      <Box sx={(t) => ({ overflowX: 'auto', border: `1px solid ${t.palette.divider}`, borderRadius: 1 })}>
+        <Table sx={{ minWidth: 560 }}>
           <TableHead><TableRow><TableCell>Version</TableCell><TableCell>Value</TableCell><TableCell>Owner</TableCell><TableCell>Effective</TableCell><TableCell>Reason</TableCell></TableRow></TableHead>
           <TableBody>
             {versions.map((v) => (
               <TableRow key={v.version}>
-                <TableCell>v{v.version}{v.version === def.version ? ' (current)' : ''}</TableCell>
+                <TableCell><StatusChip tone={v.version === def.version ? 'info' : 'neutral'} square dot={false}>v{v.version}{v.version === def.version ? ' current' : ''}</StatusChip></TableCell>
                 <TableCell>{v.value}</TableCell>
-                <TableCell>{v.owner}</TableCell>
+                <TableCell><AvatarName name={v.owner} size={24} /></TableCell>
                 <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDate(v.effectiveDate)}</TableCell>
                 <TableCell>{v.reason}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-      </div>
-      <div>
-        <Typography variant="caption">Version used by each closed review</Typography>
-        {snapshots.isError ? <Typography variant="body2">Reviews could not be loaded.</Typography> : !snapshots.data ? <LoadingState rows={2} />
+      </Box>
+      <Box>
+        <Typography variant="overline" component="p" sx={{ mb: 0.75 }}>Version used by each closed review</Typography>
+        {snapshots.isError ? <ErrorState message="Reviews could not be loaded." onRetry={() => void snapshots.refetch()} /> : !snapshots.data ? <LoadingState rows={2} />
           : closed.length === 0 ? <Typography variant="body2">No review has been closed yet.</Typography> : (
-            <Stack sx={{ mt: 0.5 }}>
+            <Stack direction="row" sx={{ gap: 0.75, flexWrap: 'wrap' }}>
               {closed.map((s) => {
                 const used = s.content?.definitionVersions[def.id];
-                return <Typography key={s.id} variant="body2">{s.label}: {used ? `v${used}` : 'not recorded when this review closed'}</Typography>;
+                return <StatusChip key={s.id} tone={used ? 'neutral' : 'warning'} dot={false}>{s.label}: {used ? `v${used}` : 'not recorded'}</StatusChip>;
               })}
             </Stack>
           )}
-      </div>
+      </Box>
     </Stack>
   );
 }

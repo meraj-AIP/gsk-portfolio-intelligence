@@ -9,6 +9,9 @@ import { useResourceConstraints } from '@/shared/api/hooks';
 import { EmptyState, ErrorState, LoadingState } from '@/shared/components/StatePanels';
 import { formatDate } from '@/shared/lib/format';
 import type { Commitment } from '@/shared/types/domain';
+import { AvatarName } from '@/shared/components/ui/AvatarName';
+import { StatusChip } from '@/shared/components/ui/StatusChip';
+import { sentence } from './directoryModel';
 
 /** Missing people or skills that put a named commitment at risk. */
 export function ResourceConstraints({ projectId, commitments }: { projectId: string; commitments: Commitment[] }) {
@@ -25,11 +28,11 @@ export function ResourceConstraints({ projectId, commitments }: { projectId: str
         <TableBody>
           {rows.map((r) => (
             <TableRow key={r.id}>
-              <TableCell>{r.requiredTeamOrSkill}</TableCell>
+              <TableCell sx={{ fontWeight: 600 }}>{r.requiredTeamOrSkill}</TableCell>
               <TableCell>{title(r.affectedCommitmentId)}</TableCell>
-              <TableCell>{r.responsibleOwner}</TableCell>
+              <TableCell><AvatarName name={r.responsibleOwner} size={24} /></TableCell>
               <TableCell sx={{ whiteSpace: 'nowrap' }}>{formatDate(r.neededBy)}</TableCell>
-              <TableCell><Typography variant="caption" sx={{ color: r.status === 'open' ? 'condition.attention' : 'text.secondary', fontWeight: r.status === 'open' ? 700 : 400 }}>{r.status}</Typography></TableCell>
+              <TableCell><StatusChip tone={r.status === 'open' ? 'warning' : 'neutral'} dot={r.status === 'open'}>{sentence(r.status)}</StatusChip></TableCell>
               <TableCell sx={{ maxWidth: 260 }}><Typography variant="caption">{r.note}</Typography></TableCell>
             </TableRow>
           ))}

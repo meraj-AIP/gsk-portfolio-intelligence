@@ -4,7 +4,7 @@ import { EmptyState, ErrorState, LoadingState } from '@/shared/components/StateP
 import type { Action } from '@/shared/types/domain';
 import { ActionUpdateDialog } from './ActionUpdateDialog';
 import { ActionsTable } from './ActionsTable';
-import { MatrixCard, MatrixMessage } from './MatrixCard';
+import { MatrixCard, MatrixMessage } from '@/shared/components/ui/MatrixCard';
 import { Pager, useListParams } from './viewState';
 
 const SUBTITLE = 'Assignment, progress, blockers and completion evidence. Owner reported completion is not verified completion.';

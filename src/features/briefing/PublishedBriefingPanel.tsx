@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import { useAuth } from '@/features/auth/AuthContext';
 import { useDefinitions, useReviseBriefing } from '@/shared/api/hooks';
 import { KeyValueList } from '@/shared/components/KeyValueList';
+import { StatusChip } from '@/shared/components/ui/StatusChip';
 import { can } from '@/shared/lib/permissions';
 import type { Briefing } from '@/shared/types/domain';
 
@@ -30,10 +31,10 @@ export function PublishedBriefingPanel({ briefing, onRevised }: Props) {
         { label: 'Snapshot', value: briefing.snapshotId },
       ]} />
       <div>
-        <Typography variant="caption">Definition versions in force</Typography>
+        <Typography variant="overline" component="p" sx={{ mb: 0.5 }}>Definition versions in force</Typography>
         {versions.length === 0 ? <Typography variant="body2">Not recorded for this publication.</Typography> : (
-          <Stack sx={{ mt: 0.5 }}>
-            {versions.map(([id, v]) => <Typography key={id} variant="body2">{name(id)} ({id}): v{v}</Typography>)}
+          <Stack direction="row" sx={{ gap: 0.5, flexWrap: 'wrap' }}>
+            {versions.map(([id, v]) => <StatusChip key={id} tone="info" square dot={false} title={id}>{name(id)}: v{v}</StatusChip>)}
           </Stack>
         )}
       </div>

@@ -3,7 +3,8 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import type { TrailPoint } from '@/shared/lib/journey';
 import type { Finding } from '@/shared/types/domain';
-import { Step, StatementFrame, muted } from './JourneyParts';
+import { Step, muted } from './JourneyParts';
+import { StatementFrame } from '@/shared/components/ui/Statement';
 
 const shortWeek = (week: string) => week.replace(/^\d{4}-/, '');
 
@@ -33,12 +34,12 @@ export function StepChange({ f, trail }: { f: Finding; trail: TrailPoint[] }) {
     <Step n={1} title="What changed" lead={lead}>
       <StatementFrame type={f.statementType}>
         <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 2 }}>
-          <Box sx={{ flex: 1 }}><Typography variant="caption">Previous position</Typography><Typography variant="body2">{f.previousPosition}</Typography></Box>
-          <Box sx={{ flex: 1 }}><Typography variant="caption">Current position</Typography><Typography variant="body2" sx={{ fontWeight: 600 }}>{f.currentPosition}</Typography></Box>
+          <Box sx={{ flex: 1 }}><Typography variant="overline" component="p">Previous position</Typography><Typography variant="body2">{f.previousPosition}</Typography></Box>
+          <Box sx={{ flex: 1 }}><Typography variant="overline" component="p">Current position</Typography><Typography variant="body2" sx={{ fontWeight: 600 }}>{f.currentPosition}</Typography></Box>
         </Stack>
       </StatementFrame>
       <Box>
-        <Typography variant="caption">Position in each weekly review</Typography>
+        <Typography variant="overline" component="p" sx={{ mb: 0.5 }}>Position in each weekly review</Typography>
         <Trail trail={trail} />
       </Box>
     </Step>

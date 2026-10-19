@@ -12,7 +12,7 @@ import { AvatarName } from '@/shared/components/ui/AvatarName';
 import { StatusChip } from '@/shared/components/ui/StatusChip';
 import { formatDate } from '@/shared/lib/format';
 import type { Decision } from '@/shared/types/domain';
-import { MatrixCard, MatrixMessage, RowTitle } from './MatrixCard';
+import { MatrixCard, MatrixMessage, RowTitle } from '@/shared/components/ui/MatrixCard';
 import { ACTION_TONE, Pager, useListParams } from './viewState';
 
 /** Each linked action shows its live status, so a decision that led nowhere is visible. */

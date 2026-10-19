@@ -1,4 +1,5 @@
 import MenuItem from '@mui/material/MenuItem';
+import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
@@ -22,13 +23,16 @@ type Props = { filters: ReturnType<typeof useDependencyFilters>; projects: Proje
 
 export function DependencyFilters({ filters: { values, set }, projects, owners, listView, summary }: Props) {
   return (
-    <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', mb: 2 }}>
-      <TextField select label="Project" value={values.project} onChange={(e) => set.project(e.target.value)} sx={{ minWidth: 220 }}><MenuItem value="">All in scope</MenuItem>{projects.map((p) => <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>)}</TextField>
-      <TextField select label="Owner" value={values.owner} onChange={(e) => set.owner(e.target.value)} sx={{ minWidth: 200 }}><MenuItem value="">All</MenuItem>{owners.map((o) => <MenuItem key={o} value={o}>{o}</MenuItem>)}</TextField>
-      <TextField select label="Relationship" value={values.type} onChange={(e) => set.type(e.target.value)} sx={{ minWidth: 220 }}><MenuItem value="">All</MenuItem>{DEPENDENCY_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField>
-      <TextField label="Required before" type="date" value={values.before} onChange={(e) => set.before(e.target.value)} slotProps={{ inputLabel: { shrink: true } }}
-        disabled={listView} helperText={listView ? 'Applies to the graph view' : undefined} />
-      {listView ? null : <Typography variant="caption" sx={{ alignSelf: 'center' }}>{summary}</Typography>}
-    </Stack>
+    <Paper sx={{ p: 2, borderRadius: 2 }}>
+      <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+        <Typography variant="overline" sx={{ mr: 0.5 }}>Filter relationships</Typography>
+        <TextField select label="Project" value={values.project} onChange={(e) => set.project(e.target.value)} size="small" sx={{ minWidth: 220 }}><MenuItem value="">All in scope</MenuItem>{projects.map((p) => <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>)}</TextField>
+        <TextField select label="Owner" value={values.owner} onChange={(e) => set.owner(e.target.value)} size="small" sx={{ minWidth: 200 }}><MenuItem value="">All</MenuItem>{owners.map((o) => <MenuItem key={o} value={o}>{o}</MenuItem>)}</TextField>
+        <TextField select label="Relationship" value={values.type} onChange={(e) => set.type(e.target.value)} size="small" sx={{ minWidth: 220 }}><MenuItem value="">All</MenuItem>{DEPENDENCY_TYPES.map((t) => <MenuItem key={t} value={t}>{t}</MenuItem>)}</TextField>
+        <TextField size="small" label="Required before" type="date" value={values.before} onChange={(e) => set.before(e.target.value)} slotProps={{ inputLabel: { shrink: true } }}
+          disabled={listView} helperText={listView ? 'Applies to the graph view' : undefined} />
+        {listView ? null : <Typography variant="label" sx={{ ml: 'auto', color: 'text.secondary', fontVariantNumeric: 'tabular-nums' }}>{summary}</Typography>}
+      </Stack>
+    </Paper>
   );
 }

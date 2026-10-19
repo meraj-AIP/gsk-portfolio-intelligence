@@ -52,6 +52,6 @@ Sign-in uses an account picker in place of the Entra ID redirect. The session is
 
 ## Design
 
-Navy navigation, quiet white reading surface, Google Sans. Colour carries meaning only: amber attention, red breached, teal met, neutral blue reported, hatched grey unknown, purple owner-confirmed. Everything visual goes through `src/theme/`.
+Follows the customer's reference design system: a two-row navy header, one orange accent for primary actions and the active stage, white cards with slate borders on a pale canvas, tinted status chips and Inter with tabular figures. Colour carries meaning only: amber attention, red breached, teal met, neutral blue reported, hatched grey unknown, purple owner-confirmed. Everything visual goes through `src/theme/`.
 
 See `ARCHITECTURE.md` for the folder layout and `AGENTS.md` for the rules when extending.

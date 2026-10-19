@@ -23,8 +23,8 @@ function Body({ e, compact }: { e: Evidence; compact: boolean }) {
   const notes = limitations(e);
   const restricted = e.permission === 'restricted';
   return (
-    <Box sx={{ pl: 1.25, borderLeft: 2, borderColor: 'divider' }}>
-      <Typography variant="caption" sx={{ display: 'block' }}>
+    <Box sx={(t) => ({ p: 1.25, borderRadius: 1, bgcolor: t.palette.background.paper, border: `1px solid ${t.palette.divider}` })}>
+      <Typography variant="caption" sx={{ display: 'block', fontWeight: 600 }}>
         {e.id}, {e.type}, {e.source}, {formatDate(e.date)}, version {e.version}, owner {e.owner}
       </Typography>
       {restricted ? null : <Typography variant="body2" sx={{ fontStyle: 'italic', my: 0.25 }}>&ldquo;{e.excerpt}&rdquo;</Typography>}
@@ -43,9 +43,9 @@ export function EvidenceInline({ id, record, compact = false }: Props) {
   const query = useEvidence(record ? '' : id);
   const e = record ?? query.data;
   if (e) return <Body e={e} compact={compact} />;
-  if (query.isLoading) return <Skeleton variant="rectangular" height={48} sx={{ borderRadius: 0.5 }} aria-label={`Loading ${id}`} />;
+  if (query.isLoading) return <Skeleton variant="rounded" height={56} sx={{ borderRadius: 1 }} aria-label={`Loading ${id}`} />;
   return (
-    <Stack sx={{ pl: 1.25, borderLeft: 2, borderColor: 'divider' }}>
+    <Stack sx={(t) => ({ p: 1.25, borderRadius: 1, bgcolor: t.palette.tint.warning.bg, border: `1px solid ${t.palette.divider}` })}>
       <Typography variant="body2" sx={{ fontWeight: 600 }}>
         {query.isError ? `${id} could not be loaded: ${query.error.message}` : `${id} could not be resolved. The record may have been removed or your permissions may not cover it.`}
       </Typography>

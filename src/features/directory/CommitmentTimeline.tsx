@@ -1,11 +1,10 @@
 import Box from '@mui/material/Box';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import type { Commitment } from '@/shared/types/domain';
 import { EmptyState } from '@/shared/components/StatePanels';
 import { useUrlParam } from '@/shared/hooks/useUrlState';
+import { SegmentedToggle } from '@/shared/components/ui/Controls';
 import { CommitmentTable } from './CommitmentTable';
 
 const START = new Date('2026-09-07').getTime();
@@ -18,9 +17,9 @@ export function CommitmentTimeline({ commitments }: { commitments: Commitment[] 
   const [view, setView] = useUrlParam('timeline');
   if (!commitments.length) return <EmptyState title="No commitments recorded" />;
   const toggle = (
-    <ToggleButtonGroup size="small" exclusive value={view || 'chart'} onChange={(_, v: string | null) => v && setView(v === 'chart' ? null : v)} aria-label="Timeline view" sx={{ mb: 1 }}>
-      <ToggleButton value="chart">Chart</ToggleButton><ToggleButton value="table">Table</ToggleButton>
-    </ToggleButtonGroup>
+    <Box sx={{ mb: 1.5 }}>
+      <SegmentedToggle label="Timeline view" value={view || 'chart'} onChange={(v) => setView(v === 'chart' ? null : v)} options={[{ value: 'chart', label: 'Chart' }, { value: 'table', label: 'Table' }]} />
+    </Box>
   );
   if (view === 'table') return <Box>{toggle}<CommitmentTable commitments={commitments} /></Box>;
   const left = 230; const width = 900; const rowH = 30; const top = 26;

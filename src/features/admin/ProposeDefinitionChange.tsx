@@ -27,7 +27,7 @@ export function ProposeDefinitionChange({ def }: { def: Definition }) {
       <TextField label="Reason for change" required value={reason} onChange={(e) => setReason(e.target.value)} helperText="Recorded with the new version and shown in its history." />
       <Stack direction="row" sx={{ gap: 1, flexWrap: 'wrap' }}>
         <Button variant="outlined" disabled={!changed} onClick={() => setPreviewed(proposed.trim())}>Preview effect</Button>
-        <Button variant="contained" disabled={!canApply || previewed !== proposed.trim() || !changed || !reason.trim() || apply.isPending} onClick={submit}>Apply as v{def.version + 1}</Button>
+        <Button variant="contained" color="secondary" disabled={!canApply || previewed !== proposed.trim() || !changed || !reason.trim() || apply.isPending} onClick={submit}>Apply as v{def.version + 1}</Button>
       </Stack>
       {previewed ? <DefinitionPreviewResult id={def.id} value={previewed} /> : null}
       {!canApply ? <Typography variant="caption">Only the portfolio lead can apply a definition change. You can preview the effect.</Typography> : null}

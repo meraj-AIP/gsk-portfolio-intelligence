@@ -3,7 +3,8 @@ import Typography from '@mui/material/Typography';
 import { formatDate, gbpShort } from '@/shared/lib/format';
 import type { Implication } from '@/shared/lib/journey';
 import type { Finding } from '@/shared/types/domain';
-import { Field, Step, StatementFrame, muted } from './JourneyParts';
+import { Field, Step, muted } from './JourneyParts';
+import { StatementFrame } from '@/shared/components/ui/Statement';
 
 function Cost({ cost }: { cost: Implication['cost'] }) {
   if (!cost.budget) return <Typography variant="body2" sx={muted}>No direct budget is recorded against the affected projects.</Typography>;

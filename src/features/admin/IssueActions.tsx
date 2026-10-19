@@ -3,12 +3,11 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useAuth } from '@/features/auth/AuthContext';
 import { useRequestCorrection, useResolveSourceIssue } from '@/shared/api/hooks';
+import { SegmentedToggle } from '@/shared/components/ui/Controls';
 import { can, type Capability } from '@/shared/lib/permissions';
 import type { Source, SourceIssue } from '@/shared/types/domain';
 import { candidateValues, issueKind } from './sourceIssues';
@@ -49,9 +48,7 @@ export function IssueActions({ source, issue }: Props) {
 
   return (
     <Stack sx={{ gap: 1 }}>
-      <ToggleButtonGroup exclusive size="small" value={mode} onChange={(_, v: Mode | null) => { if (v) setMode(v); }} sx={{ flexWrap: 'wrap' }}>
-        {MODES.map((m) => <ToggleButton key={m.mode} value={m.mode}>{m.label}</ToggleButton>)}
-      </ToggleButtonGroup>
+      <SegmentedToggle label="Decision type" value={mode} onChange={(v) => setMode(v as Mode)} options={MODES.map((m) => ({ value: m.mode, label: m.label }))} />
       {mode === 'mapping' ? <Typography variant="caption">Confirm how this source's field maps to the portfolio record. The source system itself is not changed.</Typography> : null}
       {mode === 'reconciliation' ? (
         <>
@@ -63,7 +60,7 @@ export function IssueActions({ source, issue }: Props) {
       ) : null}
       {mode === 'correction' ? <Typography variant="caption">Asks {issue.reconciliationOwner} to correct the value at source. The issue stays open until it is resolved.</Typography> : null}
       <TextField label={mode === 'reconciliation' ? 'Reason (optional)' : mode === 'mapping' ? 'Mapping confirmed' : 'What needs correcting'} value={note} onChange={(e) => setNote(e.target.value)} multiline minRows={2} />
-      <Button variant="contained" disabled={!allowed || !ready || busy} onClick={submit} sx={{ alignSelf: 'flex-start' }}>{current.label}</Button>
+      <Button variant="contained" color="secondary" disabled={!allowed || !ready || busy} onClick={submit} sx={{ alignSelf: 'flex-start' }}>{current.label}</Button>
       {!allowed ? <Typography variant="caption">The {user?.role ?? 'signed out'} role cannot {current.capability}.</Typography> : null}
       {error ? <Alert severity="error">{error}</Alert> : null}
       {resolve.isSuccess || correction.isSuccess ? <Alert severity="success">Recorded with provenance. The source system itself is not changed from here; that needs the separately authorised integration.</Alert> : null}

@@ -15,7 +15,7 @@ import { AvatarName } from '@/shared/components/ui/AvatarName';
 import { StatusChip } from '@/shared/components/ui/StatusChip';
 import { formatDate } from '@/shared/lib/format';
 import { can } from '@/shared/lib/permissions';
-import { RowTitle } from './MatrixCard';
+import { RowTitle } from '@/shared/components/ui/MatrixCard';
 import { ACTION_TONE, Aging, capitalise } from './viewState';
 
 type Props = { actions: Action[]; onUpdate: (a: Action) => void };

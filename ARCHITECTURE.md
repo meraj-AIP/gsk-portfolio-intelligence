@@ -50,3 +50,10 @@ src/
 - Contextual views open over any page from URL params: `?finding=` (the six-step finding journey), `?evidence=` (full record and version compare), `?ask=&q=` (investigation panel), `?constraint=`, `?release=`.
 - `shared/lib/journey.ts` holds the finding lifecycle, impact (confirmed kept apart from inferred), business implication and week-by-week trail. `shared/lib/constraints.ts` holds shared constraints, their trace and the release summary. `shared/lib/assessment.ts` holds the written portfolio assessment, "since last review", programme contribution and the briefing figures. Overview and briefing use the same calculations, and a published briefing freezes its figures.
 - Colour marks exceptions only: amber needs attention, red breached. Met and reported are neutral text.
+
+## Design system
+
+- Tokens live in `src/theme/palette.ts` (navy, accent, canvas, borders and four status tints) and `src/theme/index.ts` (Inter type scale with `metric`, `label` and `overline` variants, card radius, elevation, table and tab styling), taken from the customer's reference design.
+- The shell is a two-row navy header (logo, breadcrumb, programme scope, search, briefing action, my work, account; then section tabs, the administration menu and source status), the review context strip and a footer. There is no sidebar.
+- Shared building blocks in `src/shared/components/ui/`: StatusChip, KpiTile, StageGateTrack, InitiativeCard, AvatarName, FilterChips, SegmentedToggle, ProgressLine, MatrixCard, MatrixPager and the statement chip and frame. Screens compose these rather than styling locally, so every page reads as one product.
+- Every figure shown comes from records through the hooks; reference elements with no data behind them are left out rather than invented.

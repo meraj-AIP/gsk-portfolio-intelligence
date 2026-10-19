@@ -1,14 +1,13 @@
-import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
-import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
 import { useSearchParams } from 'react-router-dom';
+import { MatrixCard, MatrixMessage } from '@/shared/components/ui/MatrixCard';
+import { MatrixPager } from '@/shared/components/ui/MatrixPager';
 import { useAuditPage } from '@/shared/api/hooks';
 import { EmptyState, ErrorState, LoadingState } from '@/shared/components/StatePanels';
 import { AUDIT_KINDS } from './auditKinds';
@@ -31,34 +30,36 @@ export function AuditTable() {
   const pageSize = SIZES.includes(Number(params.get('size'))) ? Number(params.get('size')) : SIZES[0]!;
   const audit = useAuditPage({ page, pageSize, ...(q ? { q } : {}), ...(kind ? { kind } : {}) });
   const filtered = Boolean(q || kind);
+  const data = audit.data;
+
+  const filters = (
+    <>
+      <TextField label="Search summary, user or record" value={q} onChange={(e) => update({ q: e.target.value, page: null })} sx={{ width: { xs: '100%', sm: 260 } }} />
+      <TextField select label="Change" value={kind} onChange={(e) => update({ kind: e.target.value, page: null })} sx={{ width: { xs: '100%', sm: 200 } }}>
+        <MenuItem value="">All changes</MenuItem>
+        {AUDIT_KINDS.map((k) => <MenuItem key={k} value={k}>{k}</MenuItem>)}
+      </TextField>
+    </>
+  );
 
   return (
-    <Stack sx={{ gap: 1.5 }}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} sx={{ gap: 1 }}>
-        <TextField size="small" label="Search summary, user or record" value={q} onChange={(e) => update({ q: e.target.value, page: null })} sx={{ flex: 1 }} />
-        <TextField size="small" select label="Change" value={kind} onChange={(e) => update({ kind: e.target.value, page: null })} sx={{ minWidth: 220 }}>
-          <MenuItem value="">All changes</MenuItem>
-          {AUDIT_KINDS.map((k) => <MenuItem key={k} value={k}>{k}</MenuItem>)}
-        </TextField>
-      </Stack>
-      {audit.isError ? <ErrorState message="The audit trail could not be loaded." onRetry={() => void audit.refetch()} />
-        : !audit.data ? <LoadingState rows={6} />
-          : audit.data.total === 0 ? (
-            <EmptyState title={filtered ? 'No changes match these filters' : 'No changes recorded yet'}
-              hint={filtered ? 'Clear the search or change filter to see more.' : 'Changes made in this session, such as responses, decisions, briefing edits and definition changes, appear here as they happen.'} />
+    <MatrixCard title="Changes" subtitle="Every change with its user, role, record, the evidence version acted on and the inputs supplied." actions={filters}
+      footer={data?.total ? <MatrixPager data={data} noun="changes" sizes={SIZES} onPage={(n) => update({ page: n ? String(n) : null })} onSize={(n) => update({ size: String(n), page: null })} /> : undefined}>
+      {audit.isError ? <MatrixMessage><ErrorState message="The audit trail could not be loaded." onRetry={() => void audit.refetch()} /></MatrixMessage>
+        : !data ? <MatrixMessage><LoadingState rows={6} /></MatrixMessage>
+          : data.total === 0 ? (
+            <MatrixMessage>
+              <EmptyState title={filtered ? 'No changes match these filters' : 'No changes recorded yet'}
+                hint={filtered ? 'Clear the search or change filter to see more.' : 'Changes made in this session, such as responses, decisions, briefing edits and definition changes, appear here as they happen.'} />
+            </MatrixMessage>
           ) : (
-            <Box sx={{ overflowX: 'auto' }}>
-              <Table size="small" sx={{ minWidth: 1000 }}>
-                <TableHead>
-                  <TableRow><TableCell>Time</TableCell><TableCell>User</TableCell><TableCell>Role</TableCell><TableCell>Change</TableCell><TableCell>Record</TableCell><TableCell>Summary</TableCell><TableCell>Evidence version</TableCell><TableCell>Inputs</TableCell></TableRow>
-                </TableHead>
-                <TableBody>{audit.data.items.map((e) => <AuditRow key={e.id} entry={e} />)}</TableBody>
-              </Table>
-              <TablePagination component="div" count={audit.data.total} page={audit.data.page} rowsPerPage={audit.data.pageSize} rowsPerPageOptions={SIZES}
-                labelDisplayedRows={({ from, to, count }) => `${from} to ${to} of ${count}`}
-                onPageChange={(_, n) => update({ page: n ? String(n) : null })} onRowsPerPageChange={(e) => update({ size: e.target.value, page: null })} />
-            </Box>
+            <Table sx={{ minWidth: 1000 }}>
+              <TableHead>
+                <TableRow><TableCell>Time</TableCell><TableCell>User and role</TableCell><TableCell>Change</TableCell><TableCell>Record</TableCell><TableCell>Summary</TableCell><TableCell>Evidence version</TableCell><TableCell align="right">Inputs</TableCell></TableRow>
+              </TableHead>
+              <TableBody>{data.items.map((e) => <AuditRow key={e.id} entry={e} />)}</TableBody>
+            </Table>
           )}
-    </Stack>
+    </MatrixCard>
   );
 }

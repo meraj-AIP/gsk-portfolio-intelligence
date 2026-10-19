@@ -28,16 +28,16 @@ export function OutcomeGroups({ measures }: { measures: OutcomeMeasure[] }) {
         if (!rows.length) return null;
         return (
           <Box key={g.kind} sx={{ overflowX: 'auto' }}>
-            <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.primary' }}>{g.title} ({rows.length})</Typography>
+            <Typography variant="label" sx={{ display: 'block', mb: 0.75, color: 'primary.main' }}>{g.title} ({rows.length})</Typography>
             <Table size="small" sx={{ minWidth: 720 }}>
               <TableHead><TableRow><TableCell>Measure</TableCell><TableCell align="right">Baseline</TableCell><TableCell align="right">Forecast</TableCell><TableCell align="right">Measured</TableCell><TableCell>Population and attribution</TableCell><TableCell>Owner, period</TableCell><TableCell /></TableRow></TableHead>
               <TableBody>
                 {rows.map((o) => (
                   <TableRow key={o.id}>
-                    <TableCell><Typography variant="body2">{o.name}</Typography><Typography variant="caption">{o.definition}</Typography></TableCell>
+                    <TableCell><Typography variant="body2" sx={{ fontWeight: 600 }}>{o.name}</Typography><Typography variant="caption">{o.definition}</Typography></TableCell>
                     <TableCell align="right" sx={num}>{o.baseline}</TableCell>
                     <TableCell align="right" sx={num}>{o.forecast}</TableCell>
-                    <TableCell align="right" sx={{ ...num, fontWeight: o.actual ? 700 : 400 }}>{o.actual ?? 'Not yet'}</TableCell>
+                    <TableCell align="right" sx={{ ...num, fontWeight: o.actual ? 700 : 400, color: o.actual ? 'primary.main' : 'text.secondary' }}>{o.actual ?? 'Not yet'}</TableCell>
                     <TableCell sx={{ maxWidth: 240 }}>
                       <Typography variant="caption" sx={{ display: 'block' }}>Population: {o.population ?? 'Not stated'}</Typography>
                       <Typography variant="caption">Attribution: {o.attribution ?? 'Not stated'}</Typography>

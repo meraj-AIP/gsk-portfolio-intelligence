@@ -40,14 +40,19 @@ export function AskPanel() {
   return (
     <Drawer anchor="right" open={open} onClose={() => patch({ ask: null, q: null })}
       sx={{ zIndex: (t) => t.zIndex.drawer + 1 }}
-      slotProps={{ paper: { sx: { width: { xs: '100%', md: 560 }, border: 'none' } } }}>
-      <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1.5, borderBottom: 1, borderColor: 'divider' }}>
-        <Typography variant="subtitle2">Ask</Typography>
-        <IconButton aria-label="Close ask" onClick={() => patch({ ask: null, q: null })}><CloseIcon /></IconButton>
+      slotProps={{ paper: { sx: { width: { xs: '100%', md: 560 }, bgcolor: 'background.default' } } }}>
+      <Stack direction="row" sx={(t) => ({ alignItems: 'center', justifyContent: 'space-between', px: 2.5, py: 1.5, bgcolor: t.palette.brand.navy, color: t.palette.common.white })}>
+        <Box>
+          <Typography variant="overline" component="p" sx={(t) => ({ color: t.palette.nav.muted })}>Ask the portfolio</Typography>
+          <Typography variant="subtitle1" sx={(t) => ({ color: t.palette.common.white })}>{context.label || 'Investigation'}</Typography>
+        </Box>
+        <IconButton aria-label="Close ask" onClick={() => patch({ ask: null, q: null })} sx={{ color: 'inherit' }}><CloseIcon /></IconButton>
       </Stack>
-      <Box sx={{ p: 2, overflowY: 'auto' }}>
+      <Box sx={{ p: 2.5, overflowY: 'auto' }}>
         <Stack sx={{ gap: 2 }}>
-          <Typography variant="body2">Answers are AI interpretation, not reported fact. Each comes back with its method, inputs, evidence and what remains uncertain.</Typography>
+          <Box sx={(t) => ({ p: 1.25, borderRadius: 1, bgcolor: t.palette.tint.accent.bg, color: t.palette.tint.accent.fg })}>
+            <Typography variant="body2" sx={{ color: 'inherit' }}>Answers are AI interpretation, not reported fact. Each comes back with its method, inputs, evidence and what remains uncertain.</Typography>
+          </Box>
           <AskForm key={`${about}|${q}`} initialQuestion={q} context={context} period={period} role={scope.role} onRun={run} />
           <RunHistory live={runs} onCancel={cancel} onRefine={(text) => patch({ q: text })} contextIds={context.contextIds} />
         </Stack>

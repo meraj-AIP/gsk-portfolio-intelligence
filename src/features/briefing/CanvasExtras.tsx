@@ -1,6 +1,5 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import type { Briefing, BriefingSection } from '@/shared/types/domain';
+import { SectionCard } from '@/shared/components/SectionCard';
 import { isRestricted } from './briefingRules';
 import { FiguresBlock } from './FiguresBlock';
 import { InsertAssessment } from './InsertAssessment';
@@ -24,10 +23,9 @@ export function CanvasFooter({ sections, state }: { sections: BriefingSection[];
   return (
     <>
       {hasCost ? null : (
-        <Box sx={{ p: 1.5, border: 1, borderColor: 'divider', borderRadius: 0.5 }}>
-          <Typography variant="h3">Cost and outcome figures</Typography>
+        <SectionCard title={`${sections.length + 1}. Cost and outcome figures`}>
           <FiguresBlock state={state} />
-        </Box>
+        </SectionCard>
       )}
       <UnresolvedSection state={state} position={sections.length + (hasCost ? 1 : 2)} />
     </>

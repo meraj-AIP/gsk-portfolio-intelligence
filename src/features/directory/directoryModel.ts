@@ -47,3 +47,6 @@ export const countBy = <T,>(items: T[], key: (t: T) => string): Map<string, numb
   for (const it of items) m.set(key(it), (m.get(key(it)) ?? 0) + 1);
   return m;
 };
+
+/** Record values are stored lower case; chips show them in sentence case. */
+export const sentence = (s: string): string => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);

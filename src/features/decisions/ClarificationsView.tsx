@@ -14,7 +14,7 @@ import { StatusChip } from '@/shared/components/ui/StatusChip';
 import { formatDate } from '@/shared/lib/format';
 import type { Clarification } from '@/shared/types/workflow';
 import { AnswerClarificationDialog } from './AnswerClarificationDialog';
-import { MatrixCard, MatrixMessage, RowTitle } from './MatrixCard';
+import { MatrixCard, MatrixMessage, RowTitle } from '@/shared/components/ui/MatrixCard';
 import { Aging, Pager, useListParams } from './viewState';
 
 function Rows({ rows, me, onAnswer }: { rows: Clarification[]; me: string; onAnswer: (c: Clarification) => void }) {

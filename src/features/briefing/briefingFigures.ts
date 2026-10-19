@@ -46,6 +46,29 @@ export function figureLines(f: BriefingFigures, audience: string): string[] {
   ];
 }
 
+export type FigureCell = { label: string; value: string; note: string };
+
+/** The same figures as figureLines, split into stat cells for the canvas. Exports keep using the sentences. */
+export function figureCells(f: BriefingFigures, audience: string): FigureCell[] {
+  const { cost } = f;
+  const outcomes: FigureCell[] = [
+    { label: 'Outcomes measured', value: String(f.measuredOutcomes), note: 'Counted from recorded actuals' },
+    { label: 'Benefits forecast', value: String(f.forecastBenefits), note: 'Still a forecast; never added to measured' },
+  ];
+  if (isRestricted(audience)) return [{ label: 'Cost figures', value: 'Restricted', note: 'Shown to leadership only' }, ...outcomes];
+  const pct = cost.budget ? Math.round((Math.abs(cost.variance) / cost.budget) * 100) : null;
+  return [
+    { label: 'Forecast', value: gbpShort(cost.forecast), note: `Against a budget of ${gbpShort(cost.budget)}` },
+    {
+      label: 'Variance', value: cost.variance === 0 ? 'None' : `${gbpShort(Math.abs(cost.variance))} ${cost.variance > 0 ? 'over' : 'under'}`,
+      note: cost.variance === 0 ? 'Forecast matches budget' : pct === null ? 'No budget to compare' : `${pct} percent of budget`,
+    },
+    { label: 'Cost coverage', value: `${cost.coverage} of ${cost.of}`, note: 'Projects with direct cost records' },
+    ...(cost.sharedExcluded ? [{ label: 'Shared cost excluded', value: gbpShort(cost.sharedExcluded), note: 'Until finance confirms the allocation basis' }] : []),
+    ...outcomes,
+  ];
+}
+
 export function briefingExtras(b: Briefing, f: BriefingFigures, snap: Snapshot | undefined, resolve: (id: string) => BriefingItem): BriefingExtras {
   const restricted = isRestricted(b.audience);
   const unresolved = f.unresolved.filter((u) => !(restricted && resolve(u.id).audienceRestricted));
